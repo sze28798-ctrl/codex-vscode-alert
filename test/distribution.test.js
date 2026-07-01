@@ -1,5 +1,7 @@
 const assert = require('node:assert/strict');
+const childProcess = require('node:child_process');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
@@ -78,6 +80,49 @@ test('remote SSH Linux trigger posts to the local bridge endpoint', () => {
   assert.match(script, /127\.0\.0\.1:37991/);
   assert.match(script, /curl/);
   assert.match(script, /approval/);
+});
+
+test('remote SSH Linux trigger JSON-escapes payload values', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-vscode-alert-'));
+  const capturePath = path.join(tmp, 'payload.json');
+  const fakeCurlPath = path.join(tmp, 'curl');
+
+  fs.writeFileSync(
+    fakeCurlPath,
+    [
+      '#!/usr/bin/env sh',
+      'set -eu',
+      'while [ "$#" -gt 0 ]; do',
+      '  if [ "$1" = "--data" ]; then',
+      '    shift',
+      '    printf "%s" "$1" > "$CAPTURE_PATH"',
+      '  fi',
+      '  shift',
+      'done',
+    ].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const message = 'He said "approve" from C:\\tmp';
+  const result = childProcess.spawnSync(
+    'sh',
+    ['scripts/notify-remote-ssh-linux.sh', 'approval', message],
+    {
+      cwd: root,
+      env: {
+        ...process.env,
+        CAPTURE_PATH: capturePath,
+        PATH: `${tmp}${path.delimiter}${process.env.PATH}`,
+      },
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(fs.readFileSync(capturePath, 'utf8')), {
+    reason: 'approval',
+    message,
+  });
 });
 
 test('Windows remote bridge includes a listener and reverse tunnel helper', () => {

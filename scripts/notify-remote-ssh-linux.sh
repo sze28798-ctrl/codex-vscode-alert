@@ -18,7 +18,31 @@ if ! command -v curl >/dev/null 2>&1; then
   exit 1
 fi
 
-payload=$(printf '{"reason":"%s","message":"%s"}' "$REASON" "$MESSAGE")
+json_escape() {
+  JSON_VALUE=$1 awk '
+    BEGIN {
+      s = ENVIRON["JSON_VALUE"]
+      for (i = 1; i <= length(s); i++) {
+        c = substr(s, i, 1)
+        if (c == "\\") {
+          printf "\\\\"
+        } else if (c == "\"") {
+          printf "\\\""
+        } else if (c == "\r") {
+          printf "\\r"
+        } else if (c == "\n") {
+          printf "\\n"
+        } else if (c == "\t") {
+          printf "\\t"
+        } else {
+          printf "%s", c
+        }
+      }
+    }
+  '
+}
+
+payload=$(printf '{"reason":"%s","message":"%s"}' "$(json_escape "$REASON")" "$(json_escape "$MESSAGE")")
 
 if curl --fail --silent --show-error \
   --request POST \

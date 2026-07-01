@@ -1,26 +1,36 @@
-# Codex VS Code Alert
+# Agent VS Code Alert
 
-Lightweight Codex reminders for task completion and command approval.
+Lightweight reminders for AI coding agents when a task completes or a command needs approval.
 
 - Windows: flashes the VS Code taskbar icon with `FlashWindowEx`.
 - macOS: shows a system notification through `osascript`.
-- Codex: installs a global `AGENTS.md` rule so future projects trigger reminders automatically.
+- Agents: call the notification scripts from their own global instruction, rule, hook, or lifecycle system.
+- Codex support is included through a global `~/.codex/AGENTS.md` rule and an optional setup/troubleshooting skill.
 
 No VS Code extension is required.
 
 ## Install
 
-### Ask Codex to Install
+### Ask an Agent to Install
 
-Open Codex in any folder and say:
+Open your coding agent in any folder and say:
 
 ```text
-Install Codex VS Code Alert from https://github.com/sze28798-ctrl/codex-vscode-alert.
+Install Agent VS Code Alert from https://github.com/sze28798-ctrl/codex-vscode-alert.
 
-Clone the repository, run the correct installer for my operating system, and verify that future Codex task-completion and command-approval reminders are configured globally.
+Clone the repository, run the correct installer for my operating system, and configure my agent so future task-completion and command-approval reminders run globally.
 ```
 
-Codex should clone this repository, run `scripts/install.ps1` on Windows or `scripts/install.sh` on macOS, then confirm the protected `codex-vscode-alert` block exists in `~/.codex/AGENTS.md`.
+The agent should clone this repository, run `scripts/install.ps1` on Windows or `scripts/install.sh` on macOS, then add the reminder commands to its global instruction, rule, hook, or lifecycle configuration.
+
+For Codex, the installer handles this automatically by adding a protected `codex-vscode-alert` block to `~/.codex/AGENTS.md`. For other agents, use the equivalent global instruction:
+
+```text
+When finishing a task, run the installed notify-codex-done script with the task-complete reason.
+Before requesting command approval, run the installed notify-codex-done script with the approval reason.
+```
+
+The exact global-instruction file depends on the agent. The notification scripts themselves are not Codex-specific.
 
 ### Manual Install
 
@@ -46,7 +56,7 @@ The installer:
 - copies the skill to `~/.codex/skills/codex-vscode-alert`;
 - adds or updates a protected `codex-vscode-alert` block in `~/.codex/AGENTS.md`.
 
-Restart Codex after installing so it reloads global instructions and skills.
+For Codex, restart after installing so it reloads global instructions and skills. For other agents, reload whatever global configuration mechanism that agent uses.
 
 ## Manual Use
 
@@ -66,7 +76,7 @@ macOS:
 
 ## Skill
 
-After install, `$codex-vscode-alert` is available for setup, migration, and troubleshooting. It is not intended to run on every task; `AGENTS.md` carries the recurring reminder rule.
+For Codex, `$codex-vscode-alert` is available after install for setup, migration, and troubleshooting. It is not intended to run on every task; the agent's global instruction or hook carries the recurring reminder rule.
 
 ## Test
 

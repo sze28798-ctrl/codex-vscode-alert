@@ -1,0 +1,10 @@
+{
+  "name": "codex-vscode-alert",
+  "description": "Codex task-completion and approval reminders for VS Code taskbar or system notifications.",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test"
+  }
+}

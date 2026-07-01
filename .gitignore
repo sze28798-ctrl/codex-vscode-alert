@@ -1,0 +1,3 @@
+.codex-alert/
+node_modules/
+*.vsix

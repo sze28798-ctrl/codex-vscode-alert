@@ -27,6 +27,8 @@ New-Item -ItemType Directory -Force -Path (Split-Path $skillDest) | Out-Null
 
 Copy-Item -Path (Join-Path $SourceRoot "scripts\notify-codex-done.ps1") -Destination $scriptDest -Force
 Copy-Item -Path (Join-Path $SourceRoot "scripts\flash-vscode.ps1") -Destination $scriptDest -Force
+Copy-Item -Path (Join-Path $SourceRoot "scripts\start-windows-listener.ps1") -Destination $scriptDest -Force
+Copy-Item -Path (Join-Path $SourceRoot "scripts\start-remote-ssh-tunnel.ps1") -Destination $scriptDest -Force
 
 if (Test-Path -Path $skillDest) {
     Remove-Item -Path $skillDest -Recurse -Force
